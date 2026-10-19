@@ -37,6 +37,10 @@ export default defineConfig({
       name: "__MSG_name__",
       description: "__MSG_description__",
       permissions,
+      browser_specific_settings:
+        browser === "firefox"
+          ? { gecko: { id: "github-better-line-counts@local" } }
+          : undefined,
     };
   },
 });
