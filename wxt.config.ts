@@ -1,31 +1,32 @@
-import Tailwindcss from "@tailwindcss/vite";
-import Icons from "unplugin-icons/vite";
 import { defineConfig } from "wxt";
 
 export default defineConfig({
   srcDir: "src",
-  experimental: {
-    entrypointImporter: "vite-node",
-  },
-  modules: [
-    "@wxt-dev/module-vue",
-    "@wxt-dev/i18n/module",
-    "@wxt-dev/auto-icons",
-  ],
+  modules: ["@wxt-dev/module-vue", "@wxt-dev/i18n/module"],
   imports: {
     presets: ["vue-router"],
     imports: [
-      { from: "@tanstack/vue-query", name: "useQuery" },
-      { from: "@tanstack/vue-query", name: "useMutation" },
+      { from: "@pinia/colada", name: "useQuery" },
+      { from: "@pinia/colada", name: "useMutation" },
     ],
   },
-  vite: () => ({
-    plugins: [Icons({ compiler: "vue3" }), Tailwindcss() as any],
-    ssr: {
-      // List any dependencies that depend on webextension-polyfill here for vite-node importer to work
-      noExternal: ["@webext-core/proxy-service", "@webext-core/messaging"],
-    },
-  }),
+  zip: {
+    includeSources: [
+      "src",
+      "public",
+      ".tool-versions",
+      "README.md",
+      "bun.lock",
+      "package.json",
+      "tsconfig.json",
+      "wxt.config.ts",
+    ],
+    dotSources: true,
+  },
+  suppressWarnings: {
+    firefoxDataCollection: true,
+    firefoxId: true,
+  },
   manifest: ({ browser }) => {
     const permissions = ["storage"];
     if (browser === "firefox") {
@@ -37,8 +38,5 @@ export default defineConfig({
       description: "__MSG_description__",
       permissions,
     };
-  },
-  autoIcons: {
-    grayscaleOnDevelopment: false,
   },
 });
